@@ -15,89 +15,48 @@ public class Main {
     static int back = 0;
     static int iterations = 0;
     static ArrayList<Solution> solutions;
-    private static boolean searchingAll = true;
+    private static boolean searchingAll = false;
 
     public static void main(String[] args) throws IOException {
+        System.out.println("BT:");
         mainBacktracking();
-      //  mainForward();
+        System.out.println("FC:");
+        mainForward();
 
     }
 
-    private static void mainForward() throws FileNotFoundException {
-        String plik = "test_futo_" + 4 + "_" + 0 + ".txt";
-        load(plik);
-        int tmp[] = findFreeCell(0, 0);
-        System.out.println("File: " + plik);
-        solutions = new ArrayList<Solution>();
-        forwardchecking(tmp[0], tmp[1]);
-        printSolutions();
-        System.out.println("All backs: " + back);
-        System.out.println("All iterations: " + iterations);
-        System.out.println("All solutions: " + solutions.size());
+    private static void mainForward() throws IOException {
+        int fileIndex = 4;
+        int fileIndexS = 0;
 
-    }
+        for (; fileIndex != 8; ) {
+            File file = new File("forwardchecking-" + fileIndex + "-" + fileIndexS + ".txt");
+            String plik = "test_futo_" + fileIndex + "_" + fileIndexS + ".txt";
+            load(plik);
+            int tmp[] = findFreeCell(0, 0);
+            System.out.println("File: " + plik);
+            solutions = new ArrayList<Solution>();
+            long time = System.nanoTime();
+            forwardchecking(tmp[0], tmp[1]);
+            time = System.nanoTime() - time;
+            printSolutions();
+//            System.out.println("All backs: " + back);
+//            System.out.println("All iterations: " + iterations);
+//            System.out.println("All solutions: " + solutions.size());
 
-    private static boolean forwardchecking(int x, int y) {
-        iterations += 1;
-        if (y >= N) {
-            y = 0;
-            x++;
-        }
+            writeToFile("Backs: " + back, file);
+            writeToFile("\n\rIterations: " + iterations, file);
+            writeToFile("\n\rTime: " + time / 1000000000.0 + " sec", file);
+            writeToFile("\n\rSolutions: " + solutions.size(), file);
+            writeToFile("\n\r" + writeSolutions(), file);
 
-        if (x == N && y == 0) {
-            solutions.add(new Solution(cloneArray(array), back, iterations));
-            return true;
-        }
-
-        boolean isBack = true;
-        if (array[x][y] != 0)
-            return forwardchecking(x, y + 1);
-        for (int i = 1; i <= N; i++) {
-            System.out.println();
-            printArray(array);
-            System.out.println("chce wpisać:"+i+" w:"+x+"-"+y);
-
-            if (isOkFC(i, x, y)) {
-                writeFirstPossible(i, x, y);
-                System.out.println("Jest ok.");
-                printArray(array);
-                isBack = false;
-                if (forwardchecking(x, y + 1) && !searchingAll)
-                    return true;
+            fileIndexS += 1;
+            if (fileIndexS == 3) {
+                fileIndexS = 0;
+                fileIndex++;
             }
-            if (isBack) {
-                back += 1;
-                System.out.println("cofa");
-            }
+
         }
-
-
-        array[x][y] = 0;
-        return false;
-    }
-
-    private static boolean isOkFC(int k, int x, int y) {
-        if (!isOk(k, x, y))
-            return false;
-        for (int j = y + 1; j < N; j++) {
-            if (!doesVariableHasRealm(k, x, j))
-                return false;
-        }
-        for (int j = x + 1; j < N; j++)
-            if (!doesVariableHasRealm(k, j, y))
-                return false;
-        return true;
-
-    }
-
-    private static boolean doesVariableHasRealm(int k, int x, int y) {
-        int realm = N - 1;
-        for (int i = 1; i <= N; i++) {
-            if (i != k)
-                if (!isOk(i, x, y))
-                    realm--;
-        }
-        return realm != 0;
 
     }
 
@@ -105,7 +64,7 @@ public class Main {
         int fileIndex = 4;
         int fileIndexS = 0;
 
-        for (; fileIndex != 10; ) {
+        for (; fileIndex != 8; ) {
             File file = new File("2backtracking-" + fileIndex + "-" + fileIndexS + ".txt");
             String plik = "test_futo_" + fileIndex + "_" + fileIndexS + ".txt";
             load(plik);
@@ -137,6 +96,74 @@ public class Main {
 
         }
     }
+
+
+    private static boolean forwardchecking(int x, int y) {
+        iterations += 1;
+        if (y >= N) {
+            y = 0;
+            x++;
+        }
+
+        if (x == N && y == 0) {
+            solutions.add(new Solution(cloneArray(array), back, iterations));
+            return true;
+        }
+
+        boolean isBack = true;
+        if (array[x][y] != 0)
+            return forwardchecking(x, y + 1);
+        for (int i = 1; i <= N; i++) {
+           // System.out.println();
+           // printArray(array);
+           // System.out.println("chce wpisać:" + i + " w:" + x + "-" + y);
+
+            if (isOkFC(i, x, y)) {
+                writeFirstPossible(i, x, y);
+             //   System.out.println("Jest ok.");
+              //  printArray(array);
+                isBack = false;
+                if (forwardchecking(x, y + 1) && !searchingAll)
+                    return true;
+            }
+
+            if (isBack) {
+                back += 1;
+             //   System.out.println("cofa");
+            }
+        }
+
+
+        array[x][y] = 0;
+        return false;
+    }
+
+    private static boolean isOkFC(int k, int x, int y) {
+        if (!isOk(k, x, y))
+            return false;
+        for (int j = y + 1; j < N; j++) {
+            if (!doesVariableHasRealm(k, x, j,x,y))
+                return false;
+        }
+        for (int j = x + 1; j < N; j++)
+            if (!doesVariableHasRealm(k, j, y,x,y))
+                return false;
+        return true;
+
+    }
+
+    private static boolean doesVariableHasRealm(int k, int x, int y,int xx,int yy) {
+        int realm = N - 1;
+        for (int i = 1; i <= N; i++) {
+            if (i != k&&array[xx][yy]!=i&&array[xx][yy]!=0)
+                if (!isOk(i, x, y))
+                    realm--;
+        }
+        return realm != 0;
+
+    }
+
+
 
     private static void printSolutions() {
 
@@ -266,6 +293,10 @@ public class Main {
         return czyJestWWierszu(value, wiersz) || czyJestWKolumnie(value, kolumna);
     }
 
+    public static boolean czyJestWWierszuLubKolumnieBezTejSamej(int value, int wiersz, int kolumna, int x, int y) {
+        return czyJestWWierszuBezTejSamej(value, wiersz, x, y) || czyJestWKolumnieBezTejSamej(value, kolumna, x, y);
+    }
+
     public static boolean czyJestWKolumnie(int value, int n) {
         for (int i = 0; i < N; i++) {
             if (array[i][n] == value)
@@ -278,6 +309,24 @@ public class Main {
         for (int i = 0; i < N; i++) {
             if (array[n][i] == value)
                 return true;
+        }
+        return false;
+    }
+
+    public static boolean czyJestWKolumnieBezTejSamej(int value, int n, int x, int y) {
+        for (int i = 0; i < N; i++) {
+            if (array[i][n] == value)
+                if (i != x && n != y)
+                    return true;
+        }
+        return false;
+    }
+
+    public static boolean czyJestWWierszuBezTejSamej(int value, int n, int x, int y) {
+        for (int i = 0; i < N; i++) {
+            if (array[n][i] == value)
+                if (n != x && i != y)
+                    return true;
         }
         return false;
     }

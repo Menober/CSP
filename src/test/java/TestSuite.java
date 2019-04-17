@@ -30,5 +30,21 @@ public class TestSuite {
 
     }
 
+    @Test
+    public void isOk() {
+        int[][] array = {{1, 2, 3},
+                          {2, 1, 1},
+                          {3, 1, 1}};
+        Main2.array = array;
+        int[][] con = {{1, 0, 0},
+                        {0, 0, 0},
+                        {0, 0, 0},
+                        {0, 0, 0}};
+        Main2.conArray = con;
+        System.out.println(Main2.isOkG(0));
+
+
+    }
+
 
 }
