@@ -30,7 +30,7 @@ public class Main {
         int fileIndexS = 0;
 
         for (; fileIndex != 8; ) {
-            File file = new File("forwardchecking-" + fileIndex + "-" + fileIndexS + ".txt");
+            File file = new File("futoFC/futoFC-" + fileIndex + "-" + fileIndexS + ".txt");
             String plik = "test_futo_" + fileIndex + "_" + fileIndexS + ".txt";
             load(plik);
             int tmp[] = findFreeCell(0, 0);
@@ -65,7 +65,7 @@ public class Main {
         int fileIndexS = 0;
 
         for (; fileIndex != 8; ) {
-            File file = new File("2backtracking-" + fileIndex + "-" + fileIndexS + ".txt");
+            File file = new File("futoBT/futoBT-" + fileIndex + "-" + fileIndexS + ".txt");
             String plik = "test_futo_" + fileIndex + "_" + fileIndexS + ".txt";
             load(plik);
             back = 0;
