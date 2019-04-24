@@ -13,12 +13,12 @@ public class Main2 {
     static int back = 0;
     static int iterations = 0;
     static ArrayList<Solution> solutions;
-    private static boolean searchingAll = false;
+    private static boolean searchingAll = true;
 
     public static void main(String[] args) throws IOException {
-        //mainBacktracking();
-        mainForwardchecking();
-      //  mainBacktracking2();
+//        mainBacktracking();
+//        mainForwardchecking();
+        mainBacktracking2();
     }
 
     private static void mainBacktracking2() throws IOException{
